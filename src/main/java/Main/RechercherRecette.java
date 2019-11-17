@@ -40,7 +40,6 @@ public class RechercherRecette extends JFrame implements ActionListener {
 	private JLabel limg1, lmsg, lmsg1,lnom,lingredients,lprepa;
 	private JButton brecherche,bdeconn, bsup, bmodif, bretour;
 	private JTextField tnom, tingredients, tpreparation;
-	//private JTextArea tingredients, tpreparation;
 	private JMenuBar menu;
 	private JMenu file,help;
 	private JMenuItem deconnexion,quitter,aprpos, imprimer, partager;
@@ -134,7 +133,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		pcenter.setBackground(Color.yellow);
 
 		pcenter.setLayout(new BorderLayout());
-		
+
 		//ajouet le panneau centre au centre de la fentre
 		add(pcenter,"Center");
 
@@ -143,7 +142,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		lnom = new JLabel("Nom de la recette :");
 		lnom.setFont(new Font("Tahoma", Font.BOLD, 16));
 		pcenter.add(lnom);
-		
+
 		lingredients = new JLabel("Ignredients :");
 		pcenter.add(lingredients);
 		lingredients.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -153,7 +152,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		pcenter.add(lprepa);
 		lprepa.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lprepa.setVisible(false);
-		
+
 		tnom = new JTextField(15);
 		tnom.setVisible(true);
 		pcenter.add(tnom);
@@ -198,7 +197,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 
 		lmsg1 = new JLabel("");
 		pcenter.add(lmsg1);
-		
+
 		//pour l'affichage d'un message d'erreur
 		lmsg = new JLabel("");
 		lmsg.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -299,7 +298,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 					tnom.setText("");
 					tingredients.setText("");
 					tpreparation.setText("");
-					
+
 					tingredients.setVisible(false);
 					tpreparation.setVisible(false);
 					bmodif.setVisible(false);
@@ -342,7 +341,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 					tnom.setText("");
 					tingredients.setText("");
 					tpreparation.setText("");
-					
+
 					tingredients.setVisible(false);
 					tpreparation.setVisible(false);
 					bmodif.setVisible(false);

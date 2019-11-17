@@ -11,41 +11,36 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class Apropos extends JFrame {
 
-	private JPanel pc1,p1;
+	private JPanel pcentre,panel;
 	private JLabel lfond,lfond1,lfond2;
-	
+	private JScrollPane scrollp;
+
 	public  Apropos() {
 		setTitle("Apropos");
 		setSize(260, 160);
 		setLocationRelativeTo(this);
 		setResizable(false);
-	
-	//modification de l'icone de la fenetre
-		Toolkit kit=Toolkit.getDefaultToolkit();
-		 Image img=kit.getImage("Images/imageDeFond1.png");
-		 setIconImage(img);
-		
-	//creation du panneau de la fenetre 	 
-		p1=new JPanel();
-		
-		p1.setLayout(new BorderLayout());
-		
-	    add(p1,"Center");
-	    
-		//creation du panneau centre
-		pc1=new JPanel();
-		pc1.setBackground(new Color(132,141,230));
-		p1.add(pc1,BorderLayout.CENTER);
-		pc1.setLayout(new GridLayout(5, 5));
-		lfond=new JLabel("Cette application a été programmée");
-		pc1.add(lfond);
-		lfond1=new JLabel("en utilisant le langage de programmation");
-		pc1.add(lfond1);
-		lfond2=new JLabel("orienté objet JAVA sous l'IDE eclipse ");
-		pc1.add(lfond2);
-	
+
+		//modification de l'icone de la fenetre
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		Image img = kit.getImage("Images/imageDeFond1.png");
+		setIconImage(img);
+
+		//creation du panneau de la fenetre 	 
+		panel=new JPanel();
+		add(panel,"Center");
+		panel.setBackground(new Color(132,141,230));
+
+		panel.setLayout(new BorderLayout());
+		lfond=new JLabel("Cette application a été programmée en utilisant le langage de programmation orienté objet JAVA sous l'IDE eclipse \n");
+		scrollp = new JScrollPane(lfond);
+		panel.add(scrollp);
+
 	}
+
 }
+

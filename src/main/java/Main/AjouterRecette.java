@@ -33,7 +33,6 @@ public class AjouterRecette extends JFrame implements ActionListener{
 	private JLabel lnom,lingredients,lprepa, lmsg1;
 	private JButton bdeconn, benregistrer, bretour;
 	private JTextField tnom, tingredients, tpreparation;
-	//private JTextArea tingredients, tpreparation;
 	private JMenuBar menu;
 	private JMenu file,help;
 	private JMenuItem deconnexion,quitter,aprpos;

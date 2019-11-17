@@ -31,11 +31,7 @@ public class Impression implements Printable {
 	public Impression(JPanel panel){
 		documentTitle = "";
 		this.panel = panel;
-		
-	/*	 initPrintablePanel();
-    }
-    public void initPrintablePanel(){*/
-		
+		//initialisation
 		showPrintZone = false;
 		fitIntoPage = true;
 		wrapComponent = false;

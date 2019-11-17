@@ -9,12 +9,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -26,8 +23,7 @@ public class Mail extends JFrame implements ActionListener{
 	private JButton bvalider, bannuler;
 	private JTextField tadressemail, tdestination;
 	private JPasswordField tmotdepass;
-	java.sql.Statement state = null;
-	ResultSet result = null;
+
 	String objet =" ";
 	String text =" ";
 
@@ -39,7 +35,7 @@ public class Mail extends JFrame implements ActionListener{
 		setTitle("Mail");
 		//taille de la fenetre 
 		setSize(450, 150);
-		
+
 		//center l'afichage de la fenetre 
 		setLocationRelativeTo(this);
 
@@ -50,9 +46,6 @@ public class Mail extends JFrame implements ActionListener{
 		Toolkit kit=Toolkit.getDefaultToolkit();
 		Image img=kit.getImage("Images/imageDeFond1.png");
 		setIconImage(img);
-
-		
-
 
 		//ceration du panneau centre 
 		pcenter = new JPanel();
@@ -70,27 +63,25 @@ public class Mail extends JFrame implements ActionListener{
 		ladressemail = new JLabel("Votre adresse mail :");
 		ladressemail.setFont(new Font("Tahoma", Font.BOLD, 14));
 		pcenter.add(ladressemail);
-		
+
 		tadressemail = new JTextField(15);
 		pcenter.add(tadressemail);
-		
+
 		lmotdepass = new JLabel("Votre mot de passe :");
 		pcenter.add(lmotdepass);
 		lmotdepass.setFont(new Font("Tahoma", Font.BOLD, 14));
-	
-		//tingredients = new JTextArea(15,15);
+
 		tmotdepass =  new JPasswordField(15);
 		pcenter.add(tmotdepass);
-		
+
 		ldestinataire = new JLabel("Adresse du destinataire :");
 		pcenter.add(ldestinataire);
 		ldestinataire.setFont(new Font("Tahoma", Font.BOLD, 14));
 
-		//tpreparation = new JTextArea(15,15);
 		tdestination  =  new JTextField(15);
 		pcenter.add(tdestination);
-		
-		
+
+
 		//creation du panneau nord
 		pnorth = new JPanel();
 		pnorth.setBackground(new Color(191, 136, 95));
@@ -105,7 +96,7 @@ public class Mail extends JFrame implements ActionListener{
 		pnorth.add(bannuler);
 		bannuler.addActionListener(this);
 
-		
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -121,12 +112,12 @@ public class Mail extends JFrame implements ActionListener{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		dispose();
+			dispose();
 
 		}else if (e.getSource() == bannuler) {
-			
+
 			dispose();
 		}
-	
-	
+
+
 	}}
