@@ -111,9 +111,11 @@ public class PagedAccueil extends JFrame implements ActionListener {
 		// creation de la table
 		table = new JTable();
 		scrollp = new JScrollPane(table);
-		pcenter.add(new JScrollPane(table));
+		pcenter.add(scrollp);
+
 		// rendre la table non editable
 		table.setEnabled(false);
+
 		// creation du panneau nord
 		pnorth = new JPanel();
 		pnorth.setBackground(new Color(191, 136, 95));
@@ -162,7 +164,6 @@ public class PagedAccueil extends JFrame implements ActionListener {
 			// si on appuie sur le bouton Toutes les recettes
 		} else if (e.getSource() == baffichliste) {
 
-			scrollp.setVisible(true);
 			try {
 
 				// requête SQL

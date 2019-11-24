@@ -35,13 +35,13 @@ public class RechercherRecette extends JFrame implements ActionListener {
 
 	private JPanel pcenter, pnorth;
 	private JLabel limg1, lmsg, lmsg1, lnom, lingredients, lprepa;
-	private JButton brecherche, bdeconn, bsup, bmodif, bretour;
+	private JButton brecherche, bdeconn, bsup, bmodif, bretour, bconsulter;
 	private JTextField tnom;
 	private JTextArea tingredients, tpreparation;
 	private JScrollPane scrollp, scrollp2;
 	private JMenuBar menu;
 	private JMenu file, help;
-	private JMenuItem deconnexion, quitter, aprpos, imprimer, partager;
+	private JMenuItem deconnexion, quitter, aprpos, partager;
 	private Statement state = null;
 	private ResultSet result = null;
 	private PreparedStatement prepare = null;
@@ -74,14 +74,6 @@ public class RechercherRecette extends JFrame implements ActionListener {
 
 		file = new JMenu("File");
 		menu.add(file);
-
-		// création de l'item "imprimer"
-		imprimer = new JMenuItem("Imprimer");
-		file.add(imprimer);
-		// raccourci clavier; quand on appuie sur CTRL+I on imprime la rectte
-		imprimer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
-		imprimer.addActionListener(this);
-		imprimer.setVisible(false);
 
 		// création de l'item "partager"
 		partager = new JMenuItem("Partager");
@@ -178,6 +170,11 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		pnorth.add(brecherche);
 		brecherche.addActionListener(this);
 
+		bconsulter = new JButton("Consulter");
+		pnorth.add(bconsulter);
+		bconsulter.addActionListener(this);
+		bconsulter.setVisible(false);
+
 		bsup = new JButton("Supprimer");
 		pnorth.add(bsup);
 		bsup.addActionListener(this);
@@ -238,7 +235,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 					tpreparation.setVisible(true);
 					bmodif.setVisible(true);
 					bsup.setVisible(true);
-					imprimer.setVisible(true);
+					bconsulter.setVisible(true);
 					partager.setVisible(true);
 					lprepa.setVisible(true);
 					lingredients.setVisible(true);
@@ -266,7 +263,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 					tpreparation.setVisible(false);
 					bmodif.setVisible(false);
 					bsup.setVisible(false);
-					imprimer.setVisible(false);
+					bconsulter.setVisible(false);
 					partager.setVisible(false);
 					lprepa.setVisible(false);
 					lingredients.setVisible(false);
@@ -301,7 +298,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 				tpreparation.setVisible(false);
 				bmodif.setVisible(false);
 				bsup.setVisible(false);
-				imprimer.setVisible(false);
+				bconsulter.setVisible(false);
 				partager.setVisible(false);
 				lprepa.setVisible(false);
 				lingredients.setVisible(false);
@@ -343,7 +340,7 @@ public class RechercherRecette extends JFrame implements ActionListener {
 				tpreparation.setVisible(false);
 				bmodif.setVisible(false);
 				bsup.setVisible(false);
-				imprimer.setVisible(false);
+				bconsulter.setVisible(false);
 				partager.setVisible(false);
 				lprepa.setVisible(false);
 				lingredients.setVisible(false);
@@ -364,17 +361,20 @@ public class RechercherRecette extends JFrame implements ActionListener {
 			Apropos a = new Apropos();
 			a.setVisible(true);
 
-		} else if (e.getSource() == imprimer) {
-
-			Impression printPanneau = new Impression(pcenter);
-			printPanneau.print();
-
 		} else if (e.getSource() == partager) {
 			String objet = tnom.getText();
 			String text = "Ingrediants : \n " + tingredients.getText() + "\n" + "Preparation : \n"
 					+ tpreparation.getText();
 			Mail mail = new Mail(objet, text);
 			mail.setVisible(true);
+
+		} else if (e.getSource() == bconsulter) {
+			String objet = tnom.getText();
+			String text = "Ingrediants : \n " + tingredients.getText() + "\n" + "Preparation : \n"
+					+ tpreparation.getText();
+			ConsulterRecette consulter = new ConsulterRecette(objet, text);
+			consulter.setVisible(true);
+
 		}
 	}
 
