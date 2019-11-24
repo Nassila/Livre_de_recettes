@@ -1,7 +1,5 @@
 package Main;
 
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +25,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -37,105 +34,105 @@ import javax.swing.KeyStroke;
 public class RechercherRecette extends JFrame implements ActionListener {
 
 	private JPanel pcenter, pnorth;
-	private JLabel limg1, lmsg, lmsg1,lnom,lingredients,lprepa;
-	private JButton brecherche,bdeconn, bsup, bmodif, bretour;
-	private JTextField tnom, tingredients, tpreparation;
+	private JLabel limg1, lmsg, lmsg1, lnom, lingredients, lprepa;
+	private JButton brecherche, bdeconn, bsup, bmodif, bretour;
+	private JTextField tnom;
+	private JTextArea tingredients, tpreparation;
+	private JScrollPane scrollp, scrollp2;
 	private JMenuBar menu;
-	private JMenu file,help;
-	private JMenuItem deconnexion,quitter,aprpos, imprimer, partager;
+	private JMenu file, help;
+	private JMenuItem deconnexion, quitter, aprpos, imprimer, partager;
 	private Statement state = null;
 	private ResultSet result = null;
 	private PreparedStatement prepare = null;
-	private String id= null;
+	private String id = null;
 
-	//constructeur
+	// constructeur
 	public RechercherRecette() {
 
-		//titre de la fenetre
+		// titre de la fenetre
 		setTitle("Page d'accueil");
-		//taille de la fenetre 
+		// taille de la fenetre
 		setSize(605, 490);
-		//arreter l'execution à la fermeture de la fenetre
+		// arreter l'execution à la fermeture de la fenetre
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		//center l'afichage de la fenetre 
+		// center l'afichage de la fenetre
 		setLocationRelativeTo(this);
 
-		//empecher de redimensionner la fenetre
+		// empecher de redimensionner la fenetre
 		setResizable(false);
 
-		//modification de l'icone de la fenetre
-		Toolkit kit=Toolkit.getDefaultToolkit();
-		Image img=kit.getImage("Images/imageDeFond1.png");
+		// modification de l'icone de la fenetre
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		Image img = kit.getImage("Images/imageDeFond1.png");
 		setIconImage(img);
 
-		//creation de la barre de menu 
-		menu =new JMenuBar();
+		// creation de la barre de menu
+		menu = new JMenuBar();
 		setJMenuBar(menu);
 
-		file=new JMenu("File");
+		file = new JMenu("File");
 		menu.add(file);
 
-		//création de l'item "imprimer"
+		// création de l'item "imprimer"
 		imprimer = new JMenuItem("Imprimer");
 		file.add(imprimer);
-		//raccourci clavier; quand on appuie sur CTRL+I on imprime la rectte
-		imprimer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,InputEvent.CTRL_MASK));
+		// raccourci clavier; quand on appuie sur CTRL+I on imprime la rectte
+		imprimer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
 		imprimer.addActionListener(this);
 		imprimer.setVisible(false);
 
-		//création de l'item "partager"
+		// création de l'item "partager"
 		partager = new JMenuItem("Partager");
 		file.add(partager);
-		//raccourci clavier; quand on appuie sur CTRL+P on partage la rectte par mail
-		partager.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,InputEvent.CTRL_MASK));
+		// raccourci clavier; quand on appuie sur CTRL+P on partage la rectte par mail
+		partager.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 		partager.addActionListener(this);
 		partager.setVisible(false);
 
-		deconnexion=new JMenuItem("Deconnexion");
+		deconnexion = new JMenuItem("Deconnexion");
 		file.add(deconnexion);
-		//raccourci clavier; quand on appuie sur CTRL+D on se deconnecte
-		deconnexion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,InputEvent.CTRL_MASK));
+		// raccourci clavier; quand on appuie sur CTRL+D on se deconnecte
+		deconnexion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
 		deconnexion.addActionListener(this);
 
-		//création de l'item "quitter"
-		quitter=new JMenuItem("Quitter");
+		// création de l'item "quitter"
+		quitter = new JMenuItem("Quitter");
 		file.add(quitter);
-		//raccourci clavier; quand on appuie sur ALT+Q on quitte l'application
-		quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,InputEvent.ALT_MASK));
+		// raccourci clavier; quand on appuie sur ALT+Q on quitte l'application
+		quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_MASK));
 		quitter.addActionListener(this);
 
-		help=new JMenu("Help");
+		help = new JMenu("Help");
 		menu.add(help);
 
-		//creation de l'item apropos
-		aprpos=new JMenuItem("A propos de l'application");
+		// creation de l'item apropos
+		aprpos = new JMenuItem("A propos de l'application");
 		help.add(aprpos);
 		aprpos.addActionListener(this);
 
-
-		//ceration du panneau centre 
+		// ceration du panneau centre
 		pcenter = new JPanel()
 
 		{
-			//ajouter une image de fond
-			protected void paintComponent(Graphics g) 
-			{
+			// ajouter une image de fond
+			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
 
 				ImageIcon m = new ImageIcon("Images/imageDeFond2.jpg");
 				Image monImage = m.getImage();
-				g.drawImage(monImage, 0, 0,this);
+				g.drawImage(monImage, 0, 0, this);
 
 			}
 		};
-		//ajouter une couleur au panneau
+		// ajouter une couleur au panneau
 		pcenter.setBackground(Color.yellow);
 
 		pcenter.setLayout(new BorderLayout());
 
-		//ajouet le panneau centre au centre de la fentre
-		add(pcenter,"Center");
+		// ajouet le panneau centre au centre de la fentre
+		add(pcenter, "Center");
 
 		pcenter.setLayout(new GridLayout(3, 3));
 
@@ -153,26 +150,30 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		lprepa.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lprepa.setVisible(false);
 
-		tnom = new JTextField(15);
+		tnom = new JTextField(8);
 		tnom.setVisible(true);
 		pcenter.add(tnom);
 
-		//tingredients = new JTextArea(15,15);
-		tingredients =  new JTextField(15);
-		pcenter.add(tingredients);
+		// tingredients = new JTextArea(15,15);
+		tingredients = new JTextArea(8, 8);
+		scrollp = new JScrollPane(tingredients);
+		pcenter.add(scrollp);
+		scrollp.setVisible(false);
 		tingredients.setVisible(false);
 
-		//tpreparation = new JTextArea(15,15);
-		tpreparation  =  new JTextField(15);
-		pcenter.add(tpreparation);
+		// tpreparation = new JTextArea(15,15);
+		tpreparation = new JTextArea(8, 8);
+		scrollp2 = new JScrollPane(tpreparation);
+		pcenter.add(scrollp2);
+		scrollp2.setVisible(false);
 		tpreparation.setVisible(false);
 
-		//creation du panneau nord
+		// creation du panneau nord
 		pnorth = new JPanel();
 		pnorth.setBackground(new Color(191, 136, 95));
-		add(pnorth,"North");
+		add(pnorth, "North");
 
-		//création des boutons
+		// création des boutons
 		brecherche = new JButton("Recherche");
 		pnorth.add(brecherche);
 		brecherche.addActionListener(this);
@@ -198,45 +199,42 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		lmsg1 = new JLabel("");
 		pcenter.add(lmsg1);
 
-		//pour l'affichage d'un message d'erreur
+		// pour l'affichage d'un message d'erreur
 		lmsg = new JLabel("");
 		lmsg.setFont(new Font("Tahoma", Font.BOLD, 12));
 		pcenter.add(lmsg);
 
 	}
 
-
-
 	public void actionPerformed(ActionEvent e) {
 
-		//si on appuie sur le bouton deconnexion
-		if (e.getSource()==bdeconn || e.getSource() == deconnexion) {
-			//on revient à la page d'authentification
+		// si on appuie sur le bouton deconnexion
+		if (e.getSource() == bdeconn || e.getSource() == deconnexion) {
+			// on revient à la page d'authentification
 			Authentification a = new Authentification();
 			a.setVisible(true);
 			dispose();
 
-			//si on appuie sur le bouton deconnexion
-		}else if (e.getSource()==brecherche) {
+			// si on appuie sur le bouton deconnexion
+		} else if (e.getSource() == brecherche) {
 			String name = tnom.getText();
-
 
 			try {
 
+				// requête SQL
+				String sql = "SELECT `id`, `nom`, `ingredients`, `preparation` FROM `recettes` WHERE `nom` = ? ;";
 
-
-				//requête SQL
-				String sql= "SELECT `id`, `nom`, `ingredients`, `preparation` FROM `recettes` WHERE `nom` = ? ;";
-
-				//creer la connexion avec la base de données
+				// creer la connexion avec la base de données
 				prepare = Connexion.connexionBD().prepareStatement(sql);
 				prepare.setString(1, name);
 
-				//executer la requête
+				// executer la requête
 				result = prepare.executeQuery();
 
 				if (result.next()) {
+					scrollp.setVisible(true);
 					tingredients.setVisible(true);
+					scrollp2.setVisible(true);
 					tpreparation.setVisible(true);
 					bmodif.setVisible(true);
 					bsup.setVisible(true);
@@ -248,22 +246,22 @@ public class RechercherRecette extends JFrame implements ActionListener {
 					id = result.getString("id");
 					lmsg.setText("");
 
-					String nom= result.getString("nom");
+					String nom = result.getString("nom");
 					tnom.setText(nom);
 
 					String ingredients = result.getString("ingredients");
 					tingredients.setText(ingredients);
 
-					String preparation= result.getString("preparation");
+					String preparation = result.getString("preparation");
 					tpreparation.setText(preparation);
 
-
-
-				}else {
+				} else {
 					lmsg.setText("Cette recette n'existe pas");
 					tnom.setText("");
 					tingredients.setText("");
 					tpreparation.setText("");
+					scrollp.setVisible(false);
+					scrollp2.setVisible(false);
 					tingredients.setVisible(false);
 					tpreparation.setVisible(false);
 					bmodif.setVisible(false);
@@ -274,112 +272,110 @@ public class RechercherRecette extends JFrame implements ActionListener {
 					lingredients.setVisible(false);
 
 				}
-
 
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
 
-		}else
-			if (e.getSource()==bsup) {
-				try {
-					//creer la connexion avec la base de données
-					state = Connexion.connexionBD().createStatement();
-					String name = tnom.getText();
-					//requête SQL
-					String sql= "DELETE FROM `recettes` WHERE `nom` = ?;";
+		} else if (e.getSource() == bsup) {
+			try {
+				// creer la connexion avec la base de données
+				state = Connexion.connexionBD().createStatement();
+				String name = tnom.getText();
+				// requête SQL
+				String sql = "DELETE FROM `recettes` WHERE `nom` = ?;";
 
-					//executer la requête
-					prepare = Connexion.connexionBD().prepareStatement(sql);
-					prepare.setString(1, name);
-					prepare.executeUpdate();
+				// executer la requête
+				prepare = Connexion.connexionBD().prepareStatement(sql);
+				prepare.setString(1, name);
+				prepare.executeUpdate();
 
-					lmsg.setText("Cette recette a bien été supprimée");
-					tnom.setText("");
-					tingredients.setText("");
-					tpreparation.setText("");
+				lmsg.setText("Cette recette a bien été supprimée");
+				tnom.setText("");
+				tingredients.setText("");
+				tpreparation.setText("");
 
-					tingredients.setVisible(false);
-					tpreparation.setVisible(false);
-					bmodif.setVisible(false);
-					bsup.setVisible(false);
-					imprimer.setVisible(false);
-					partager.setVisible(false);
-					lprepa.setVisible(false);
-					lingredients.setVisible(false);
+				scrollp.setVisible(false);
+				scrollp2.setVisible(false);
+				tingredients.setVisible(false);
+				tpreparation.setVisible(false);
+				bmodif.setVisible(false);
+				bsup.setVisible(false);
+				imprimer.setVisible(false);
+				partager.setVisible(false);
+				lprepa.setVisible(false);
+				lingredients.setVisible(false);
 
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 
+		} else if (e.getSource() == bretour) {
+			PagedAccueil p = new PagedAccueil();
+			p.setVisible(true);
+			dispose();
+		} else if (e.getSource() == bmodif) {
+			try {
 
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
+				// creer la connexion avec la base de données
+				// state = Connexion.connexionBD().createStatement();
+				String name = tnom.getText();
 
-			}else if (e.getSource() == bretour) {
-				PagedAccueil p = new PagedAccueil();
-				p.setVisible(true);
-				dispose();
-			}else if (e.getSource() == bmodif) {
-				try {
+				// requête SQL
+				String sql = "UPDATE `recettes` SET `nom`= ?,`ingredients`= ?,`preparation`= ? WHERE `id`= ?;";
 
-					//creer la connexion avec la base de données
-					//state = Connexion.connexionBD().createStatement();
-					String name = tnom.getText();
+				// executer la requête
+				prepare = Connexion.connexionBD().prepareStatement(sql);
+				prepare.setString(1, tnom.getText());
+				prepare.setString(2, tingredients.getText());
+				prepare.setString(3, tpreparation.getText());
+				prepare.setString(4, id);
+				prepare.executeUpdate();
 
+				lmsg.setText("Cette recette a bien été modifiée");
+				tnom.setText("");
+				tingredients.setText("");
+				tpreparation.setText("");
 
-					//requête SQL
-					String sql= "UPDATE `recettes` SET `nom`= ?,`ingredients`= ?,`preparation`= ? WHERE `id`= ?;";
+				tingredients.setVisible(false);
+				scrollp.setVisible(false);
+				scrollp2.setVisible(false);
+				tpreparation.setVisible(false);
+				bmodif.setVisible(false);
+				bsup.setVisible(false);
+				imprimer.setVisible(false);
+				partager.setVisible(false);
+				lprepa.setVisible(false);
+				lingredients.setVisible(false);
 
-					//executer la requête
-					prepare = Connexion.connexionBD().prepareStatement(sql);
-					prepare.setString(1, tnom.getText());
-					prepare.setString(2, tingredients.getText());
-					prepare.setString(3, tpreparation.getText());
-					prepare.setString(4, id);
-					prepare.executeUpdate();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		} else if (e.getSource() == quitter) {
+			// une petite fenetre de confirmation apparait
+			int input = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment quitter ?", "Confirmation",
+					JOptionPane.YES_NO_OPTION);
+			if (input == 0) {// si l'utilisateur appuie sur "yes" input reçoit 0
+				System.exit(0);
+			}
 
-					lmsg.setText("Cette recette a bien été modifiée");
-					tnom.setText("");
-					tingredients.setText("");
-					tpreparation.setText("");
+		} else if (e.getSource() == aprpos) {
+			// ouvrir la fenetre Apropos
+			Apropos a = new Apropos();
+			a.setVisible(true);
 
-					tingredients.setVisible(false);
-					tpreparation.setVisible(false);
-					bmodif.setVisible(false);
-					bsup.setVisible(false);
-					imprimer.setVisible(false);
-					partager.setVisible(false);
-					lprepa.setVisible(false);
-					lingredients.setVisible(false);
+		} else if (e.getSource() == imprimer) {
 
+			Impression printPanneau = new Impression(pcenter);
+			printPanneau.print();
 
-
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			}else if (e.getSource()==quitter) {
-				//une petite fenetre de confirmation apparait
-				int input = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment quitter ?","Confirmation",JOptionPane.YES_NO_OPTION);
-				if (input == 0) {//si l'utilisateur appuie sur "yes" input reçoit 0
-					System.exit(0);
-				}
-
-			}else
-				if (e.getSource()==aprpos) {
-					//ouvrir la fenetre Apropos	
-					Apropos a=new Apropos();
-					a.setVisible(true);
-
-				}else if (e.getSource() == imprimer) {
-
-					Impression printPanneau = new Impression(pcenter);
-					printPanneau.print();
-
-				}else if (e.getSource() == partager) {
-					String objet = tnom.getText();
-					String text = "Ingrediants : \n "+tingredients.getText() +"\n"+ "Preparation : \n"+tpreparation.getText();
-					Mail mail = new Mail(objet, text);
-					mail.setVisible(true);
-				}
+		} else if (e.getSource() == partager) {
+			String objet = tnom.getText();
+			String text = "Ingrediants : \n " + tingredients.getText() + "\n" + "Preparation : \n"
+					+ tpreparation.getText();
+			Mail mail = new Mail(objet, text);
+			mail.setVisible(true);
+		}
 	}
 
 }
