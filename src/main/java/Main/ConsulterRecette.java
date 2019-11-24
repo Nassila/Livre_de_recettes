@@ -37,7 +37,7 @@ public class ConsulterRecette extends JFrame implements ActionListener {
 		this.Objet = objet;
 		this.Text = text;
 		// titre de la fenetre
-		setTitle("Ajout");
+		setTitle("Consulter");
 		// taille de la fenetre
 		setSize(555, 440);
 
