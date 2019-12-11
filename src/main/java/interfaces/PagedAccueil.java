@@ -1,10 +1,7 @@
-package Main;
+package interfaces;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -12,39 +9,39 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 
-public class AjouterRecette extends JFrame implements ActionListener {
+import environnement.Outils;
+import net.proteanit.sql.DbUtils;
+
+@SuppressWarnings("serial")
+public class PagedAccueil extends JFrame implements ActionListener {
+
 	private JPanel pcenter, pnorth;
-	private JLabel lnom, lingredients, lprepa, lmsg1;
-	private JButton bdeconn, benregistrer, bretour;
-	private JTextField tnom;
-	private JTextArea tingredients, tpreparation;
-	private JScrollPane scrollp, scrollp2;
+	private JButton brecherche, bajouter, bdeconn, baffichliste;
+	private JTable table;
+	private JScrollPane scrollp;
 	private JMenuBar menu;
 	private JMenu file, help;
 	private JMenuItem deconnexion, quitter, aprpos;
-	java.sql.Statement state = null;
-	ResultSet result = null;
+	private ResultSet result = null;
 
-	public AjouterRecette() {
+	// constructeur
+	public PagedAccueil() {
 
 		// titre de la fenetre
-		setTitle("Ajout");
+		setTitle("Page d'accueil");
 		// taille de la fenetre
 		setSize(605, 490);
 		// arreter l'execution à la fermeture de la fenetre
@@ -106,40 +103,16 @@ public class AjouterRecette extends JFrame implements ActionListener {
 		// ajouter une couleur au panneau
 		pcenter.setBackground(Color.yellow);
 
-		pcenter.setLayout(new BorderLayout());
-
-		// ajouet le panneau centre au centre
+		// ajouet le panneau centre au centre de la fentre
 		add(pcenter, "Center");
 
-		pcenter.setLayout(new GridLayout(3, 3));
-
-		lnom = new JLabel("Nom de la recette :");
-		lnom.setFont(new Font("Tahoma", Font.BOLD, 16));
-		pcenter.add(lnom);
-
-		lingredients = new JLabel("Ignredients :");
-		pcenter.add(lingredients);
-		lingredients.setFont(new Font("Tahoma", Font.BOLD, 16));
-
-		lprepa = new JLabel("Preparation :");
-		pcenter.add(lprepa);
-		lprepa.setFont(new Font("Tahoma", Font.BOLD, 16));
-
-		tnom = new JTextField(15);
-		pcenter.add(tnom);
-
-		// tingredients = new JTextArea(15,15);
-		tingredients = new JTextArea(8, 8);
-		scrollp = new JScrollPane(tingredients);
+		// creation de la table
+		table = new JTable();
+		scrollp = new JScrollPane(table);
 		pcenter.add(scrollp);
 
-		// tpreparation = new JTextArea(15,15);
-		tpreparation = new JTextArea(8, 8);
-		scrollp2 = new JScrollPane(tpreparation);
-		pcenter.add(scrollp2);
-
-		lmsg1 = new JLabel("");
-		pcenter.add(lmsg1);
+		// rendre la table non editable
+		table.setEnabled(false);
 
 		// creation du panneau nord
 		pnorth = new JPanel();
@@ -147,59 +120,55 @@ public class AjouterRecette extends JFrame implements ActionListener {
 		add(pnorth, "North");
 
 		// création des boutons
-		benregistrer = new JButton("Sauvegarder");
-		pnorth.add(benregistrer);
-		benregistrer.addActionListener(this);
+		brecherche = new JButton("Rechercher recette");
+		pnorth.add(brecherche);
+		brecherche.addActionListener(this);
 
-		bretour = new JButton("Retour");
-		pnorth.add(bretour);
-		bretour.addActionListener(this);
+		baffichliste = new JButton("Toutes les recettes");
+		pnorth.add(baffichliste);
+		baffichliste.addActionListener(this);
+
+		bajouter = new JButton("Ajouter recette");
+		pnorth.add(bajouter);
+		bajouter.addActionListener(this);
 
 		bdeconn = new JButton("Deconnexion");
 		pnorth.add(bdeconn);
 		bdeconn.addActionListener(this);
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
-		// si on appuie suir le bouton "sauvegarder"
-		if (e.getSource() == benregistrer) {
-
-			// recuperer les text dans les Jtext
-			String name = tnom.getText();
-			String ing = tingredients.getText();
-			String prepa = tpreparation.getText();
-
-			try {
-				// creer la connexion avec la base de données
-				state = Connexion.connexionBD().createStatement();
-
-				// requête SQL
-				String sql = "INSERT INTO `recettes` (`nom`, `ingredients`, `preparation`) VALUES ('" + name + "', '"
-						+ ing + "', '" + prepa + "');";
-				// executer la requête
-				state.executeUpdate(sql);
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-
-			PagedAccueil p = new PagedAccueil();
-			p.setVisible(true);
-			dispose();
-
-			// si on appuie sur le bouton "deconnexion"
-		} else if (e.getSource() == bdeconn || e.getSource() == deconnexion) {
-
+		// si on appuie sur le bouton "deconnexion"
+		if (e.getSource() == bdeconn || e.getSource() == deconnexion) {
+			// on revient à la page d'authentification
 			Authentification a = new Authentification();
 			a.setVisible(true);
 			dispose();
 
-		} else if (e.getSource() == bretour) {
-			PagedAccueil p = new PagedAccueil();
-			p.setVisible(true);
+			// si on appuie sur le bouton "Ajouter recette"
+		} else if (e.getSource() == bajouter) {
+			// alors on ouvre la fenetre d'ajout
+			AjouterRecette a = new AjouterRecette();
+			a.setVisible(true);
 			dispose();
-		} else if (e.getSource() == quitter) {
+
+			// si on appuie sur le bouton Recherche
+		} else if (e.getSource() == brecherche) {
+			RechercherRecette r = new RechercherRecette();
+			r.setVisible(true);
+			dispose();
+
+			// si on appuie sur le bouton Toutes les recettes
+		} else if (e.getSource() == baffichliste) {
+
+			result = Outils.afficherListeRecette();
+
+			table.setModel(DbUtils.resultSetToTableModel(result));
+
+			// si on appuie sur le l'item du menu "Quitter"
+		}
+		if (e.getSource() == quitter) {
 			// une petite fenetre de confirmation apparait
 			int input = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment quitter ?", "Confirmation",
 					JOptionPane.YES_NO_OPTION);
@@ -207,11 +176,14 @@ public class AjouterRecette extends JFrame implements ActionListener {
 				System.exit(0);
 			}
 
-		} else if (e.getSource() == aprpos) {
+		}
+		if (e.getSource() == aprpos) {
 			// ouvrir la fenetre Apropos
 			Apropos a = new Apropos();
 			a.setVisible(true);
 
 		}
+
 	}
+
 }

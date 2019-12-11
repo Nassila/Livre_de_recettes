@@ -1,4 +1,4 @@
-package Main;
+package interfaces;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -11,8 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import environnement.Outils;
 
 //interface d'authentification
 
@@ -32,8 +32,6 @@ public class Authentification extends JFrame implements ActionListener, FocusLis
 	private JTextField tuser;
 	private JPasswordField tpass_word;
 	private JLabel limg1, lmsg;
-	java.sql.Statement st = null;
-	ResultSet r = null;
 
 	// Constructeur
 	public Authentification() {
@@ -150,47 +148,20 @@ public class Authentification extends JFrame implements ActionListener, FocusLis
 		@SuppressWarnings("deprecation")
 		String motdepasse = tpass_word.getText().toString();
 
-		// creer un requête SQL
-		try {
-			// creer la connexion avec la base de données
-			st = Connexion.connexionBD().createStatement();
-			// requête SQL
-			String sql = "SELECT `user_name`, `pass_word` FROM `utilisateurs`";
-			// executer la requête
-			r = st.executeQuery(sql);
-			// si le bouton "sign in" est pressé
+		if (e.getSource() == bsignin) {
+			String reponse = Outils.authetification(login, motdepasse);
 
-			if (e.getSource() == bsignin) {
-				// et si les champs sont vides
-				if (login.equals("") || motdepasse.equals("")) {
-					// alors afficher un message d'erreur
-					lmsg.setText("Veuillez remplir les champs ci-dessus");
-					// sinon
-				} else {
-					while (r.next()) {
-						// recuperer des données de la base de données
-						String login1 = r.getString("user_name");
-						String motdepasse1 = r.getString("pass_word");
-						// si la valeur des les champs est egale à la valeur des la base de données
-						if (login1.equals(login) && motdepasse1.equals(motdepasse)) {
-							// alors la connexion est acceptée et il ouvre la page d'accueil
-							lmsg.setText("");
-							// ouvrir la page d'accueil
-							PagedAccueil p = new PagedAccueil();
-							p.setVisible(true);
-							// fermer la page actuelle
-							dispose();
+			if (reponse.equals("ok")) {
 
-						} else {
-							lmsg.setText("Erreur");
-						}
-					}
-				}
+				// ouvrir la page d'accueil
+				PagedAccueil p = new PagedAccueil();
+				p.setVisible(true);
+				// fermer la page actuelle
+				dispose();
 
+			} else {
+				lmsg.setText(reponse);
 			}
-
-		} catch (SQLException e1) {
-			e1.printStackTrace();
 		}
 
 	}
@@ -201,6 +172,7 @@ public class Authentification extends JFrame implements ActionListener, FocusLis
 	}
 
 	public void keyPressed(KeyEvent e) {
+
 		// recuperer le contenu djtextfield
 		String login = tuser.getText().toString();
 
@@ -208,48 +180,22 @@ public class Authentification extends JFrame implements ActionListener, FocusLis
 		@SuppressWarnings("deprecation")
 		String motdepasse = tpass_word.getText().toString();
 
-		// creer un requête SQL
-		try {
-			// creer la connexion avec la base de données
-			st = Connexion.connexionBD().createStatement();
-			// requête SQL
-			String sql = "SELECT `user_name`, `pass_word` FROM `utilisateurs`";
-			// executer la requête
-			r = st.executeQuery(sql);
-			// si on clique sur entré
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				// et si les champs sont vides
-				if (login.equals("") || motdepasse.equals("")) {
-					// alors afficher un message d'erreur
-					lmsg.setText("Veuillez remplir les champs ci-dessus");
-					// sinon
-				} else {
-					while (r.next()) {
-						// recuperer des données de la base de données
-						String login1 = r.getString("user_name");
-						String motdepasse1 = r.getString("pass_word");
-						// si la valeur des les champs est egale à la valeur des la base de données
-						if (login1.equals(login) && motdepasse1.equals(motdepasse)) {
-							// alors la connexion est acceptée et il ouvre la page d'accueil
-							lmsg.setText("");
-							// ouvrir la page d'accueil
-							PagedAccueil p = new PagedAccueil();
-							p.setVisible(true);
-							// fermer la page actuelle
-							dispose();
+		// si on clique sur entré
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			String reponse = Outils.authetification(login, motdepasse);
 
-						} else {
-							lmsg.setText("Erreur");
-						}
-					}
-				}
+			if (reponse.equals("ok")) {
 
+				// ouvrir la page d'accueil
+				PagedAccueil p = new PagedAccueil();
+				p.setVisible(true);
+				// fermer la page actuelle
+				dispose();
+
+			} else {
+				lmsg.setText(reponse);
 			}
-
-		} catch (SQLException e1) {
-			e1.printStackTrace();
 		}
-
 	}
 
 	public void keyReleased(KeyEvent e) {

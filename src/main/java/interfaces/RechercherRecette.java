@@ -1,4 +1,4 @@
-package Main;
+package interfaces;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,10 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,11 +26,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import environnement.Outils;
+
 @SuppressWarnings("serial")
 public class RechercherRecette extends JFrame implements ActionListener {
 
 	private JPanel pcenter, pnorth;
-	private JLabel limg1, lmsg, lmsg1, lnom, lingredients, lprepa;
+	private JLabel lmsg, lmsg1, lnom, lingredients, lprepa;
 	private JButton brecherche, bdeconn, bsup, bmodif, bretour, bconsulter;
 	private JTextField tnom;
 	private JTextArea tingredients, tpreparation;
@@ -42,10 +40,6 @@ public class RechercherRecette extends JFrame implements ActionListener {
 	private JMenuBar menu;
 	private JMenu file, help;
 	private JMenuItem deconnexion, quitter, aprpos, partager;
-	private Statement state = null;
-	private ResultSet result = null;
-	private PreparedStatement prepare = null;
-	private String id = null;
 
 	// constructeur
 	public RechercherRecette() {
@@ -216,82 +210,33 @@ public class RechercherRecette extends JFrame implements ActionListener {
 		} else if (e.getSource() == brecherche) {
 			String name = tnom.getText();
 
-			try {
+			String[] reponse = Outils.rechercherRecette(name).split("-/-");
 
-				// requête SQL
-				String sql = "SELECT `id`, `nom`, `ingredients`, `preparation` FROM `recettes` WHERE `nom` = ? ;";
+			if (reponse[0].equals("ok")) {
+				scrollp.setVisible(true);
+				tingredients.setVisible(true);
+				scrollp2.setVisible(true);
+				tpreparation.setVisible(true);
+				bmodif.setVisible(true);
+				bsup.setVisible(true);
+				bconsulter.setVisible(true);
+				partager.setVisible(true);
+				lprepa.setVisible(true);
+				lingredients.setVisible(true);
 
-				// creer la connexion avec la base de données
-				prepare = Connexion.connexionBD().prepareStatement(sql);
-				prepare.setString(1, name);
+				lmsg.setText("");
 
-				// executer la requête
-				result = prepare.executeQuery();
+				tnom.setText(reponse[1]);
 
-				if (result.next()) {
-					scrollp.setVisible(true);
-					tingredients.setVisible(true);
-					scrollp2.setVisible(true);
-					tpreparation.setVisible(true);
-					bmodif.setVisible(true);
-					bsup.setVisible(true);
-					bconsulter.setVisible(true);
-					partager.setVisible(true);
-					lprepa.setVisible(true);
-					lingredients.setVisible(true);
+				tingredients.setText(reponse[2]);
 
-					id = result.getString("id");
-					lmsg.setText("");
+				tpreparation.setText(reponse[3]);
 
-					String nom = result.getString("nom");
-					tnom.setText(nom);
-
-					String ingredients = result.getString("ingredients");
-					tingredients.setText(ingredients);
-
-					String preparation = result.getString("preparation");
-					tpreparation.setText(preparation);
-
-				} else {
-					lmsg.setText("Cette recette n'existe pas");
-					tnom.setText("");
-					tingredients.setText("");
-					tpreparation.setText("");
-					scrollp.setVisible(false);
-					scrollp2.setVisible(false);
-					tingredients.setVisible(false);
-					tpreparation.setVisible(false);
-					bmodif.setVisible(false);
-					bsup.setVisible(false);
-					bconsulter.setVisible(false);
-					partager.setVisible(false);
-					lprepa.setVisible(false);
-					lingredients.setVisible(false);
-
-				}
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-
-		} else if (e.getSource() == bsup) {
-			try {
-				// creer la connexion avec la base de données
-				state = Connexion.connexionBD().createStatement();
-				String name = tnom.getText();
-				// requête SQL
-				String sql = "DELETE FROM `recettes` WHERE `nom` = ?;";
-
-				// executer la requête
-				prepare = Connexion.connexionBD().prepareStatement(sql);
-				prepare.setString(1, name);
-				prepare.executeUpdate();
-
-				lmsg.setText("Cette recette a bien été supprimée");
+			} else {
+				lmsg.setText(reponse[1]);
 				tnom.setText("");
 				tingredients.setText("");
 				tpreparation.setText("");
-
 				scrollp.setVisible(false);
 				scrollp2.setVisible(false);
 				tingredients.setVisible(false);
@@ -303,51 +248,56 @@ public class RechercherRecette extends JFrame implements ActionListener {
 				lprepa.setVisible(false);
 				lingredients.setVisible(false);
 
-			} catch (SQLException e1) {
-				e1.printStackTrace();
 			}
+
+		} else if (e.getSource() == bsup)
+
+		{
+
+			String name = tnom.getText();
+			Outils.supprimerRecette(name);
+
+			lmsg.setText("Cette recette a bien été supprimée");
+			tnom.setText("");
+			tingredients.setText("");
+			tpreparation.setText("");
+
+			scrollp.setVisible(false);
+			scrollp2.setVisible(false);
+			tingredients.setVisible(false);
+			tpreparation.setVisible(false);
+			bmodif.setVisible(false);
+			bsup.setVisible(false);
+			bconsulter.setVisible(false);
+			partager.setVisible(false);
+			lprepa.setVisible(false);
+			lingredients.setVisible(false);
 
 		} else if (e.getSource() == bretour) {
 			PagedAccueil p = new PagedAccueil();
 			p.setVisible(true);
 			dispose();
+
 		} else if (e.getSource() == bmodif) {
-			try {
 
-				// creer la connexion avec la base de données
-				// state = Connexion.connexionBD().createStatement();
-				String name = tnom.getText();
+			Outils.modifierRectte(tnom.getText(), tingredients.getText(), tpreparation.getText());
 
-				// requête SQL
-				String sql = "UPDATE `recettes` SET `nom`= ?,`ingredients`= ?,`preparation`= ? WHERE `id`= ?;";
+			lmsg.setText("Cette recette a bien été modifiée");
+			tnom.setText("");
+			tingredients.setText("");
+			tpreparation.setText("");
 
-				// executer la requête
-				prepare = Connexion.connexionBD().prepareStatement(sql);
-				prepare.setString(1, tnom.getText());
-				prepare.setString(2, tingredients.getText());
-				prepare.setString(3, tpreparation.getText());
-				prepare.setString(4, id);
-				prepare.executeUpdate();
+			tingredients.setVisible(false);
+			scrollp.setVisible(false);
+			scrollp2.setVisible(false);
+			tpreparation.setVisible(false);
+			bmodif.setVisible(false);
+			bsup.setVisible(false);
+			bconsulter.setVisible(false);
+			partager.setVisible(false);
+			lprepa.setVisible(false);
+			lingredients.setVisible(false);
 
-				lmsg.setText("Cette recette a bien été modifiée");
-				tnom.setText("");
-				tingredients.setText("");
-				tpreparation.setText("");
-
-				tingredients.setVisible(false);
-				scrollp.setVisible(false);
-				scrollp2.setVisible(false);
-				tpreparation.setVisible(false);
-				bmodif.setVisible(false);
-				bsup.setVisible(false);
-				bconsulter.setVisible(false);
-				partager.setVisible(false);
-				lprepa.setVisible(false);
-				lingredients.setVisible(false);
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		} else if (e.getSource() == quitter) {
 			// une petite fenetre de confirmation apparait
 			int input = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment quitter ?", "Confirmation",
